@@ -819,17 +819,11 @@ var BlockHeader = function BlockHeader(arg) {
   this.timestamp = info.time;
   this.bits = info.bits;
   this.nonce = info.nonce;
-
-  this.vchBlockSig = info.vchBlockSig;
-  this.fStake = info.fStake;
-
-  this.prevOutStakeHash = info.prevOutStakeHash;
-  this.prevOutStakeN = info.prevOutStakeN;
-
-  this.nStakeTime = info.nStakeTime;
   this.hashStateRoot = info.hashStateRoot;
   this.hashUTXORoot = info.hashUTXORoot;
-
+  this.prevOutStakeHash = info.prevOutStakeHash;
+  this.prevOutStakeN = info.prevOutStakeN;
+  this.vchBlockSig = info.vchBlockSig;
 
   if (info.hash) {
     $.checkState(
@@ -908,15 +902,11 @@ BlockHeader._fromObject = function _fromObject(data) {
     timestamp: data.time,
     bits: data.bits,
     nonce: data.nonce,
-
-    vchBlockSig: vchBlockSig,
-    fStake: data.fStake,
+    hashStateRoot: hashStateRoot,
+    hashUTXORoot: hashUTXORoot,
     prevOutStakeHash: prevOutStakeHash,
     prevOutStakeN: data.prevOutStakeN,
-    nStakeTime: data.nStakeTime,
-    hashStateRoot: hashStateRoot,
-    hashUTXORoot: hashUTXORoot
-
+    vchBlockSig: vchBlockSig
   };
 
   return info;
@@ -982,7 +972,6 @@ BlockHeader._fromBufferReader = function _fromBufferReader(br) {
   info.hashUTXORoot = br.read(32);
   info.prevOutStakeHash = br.read(32);
   info.prevOutStakeN = br.readUInt32LE();
-
   var num = br.readVarintNum();
   info.vchBlockSig = br.read(num);
 
@@ -1010,14 +999,12 @@ BlockHeader.prototype.toObject = BlockHeader.prototype.toJSON = function toObjec
     time: this.time,
     bits: this.bits,
     nonce: this.nonce,
-
-    vchBlockSig: this.vchBlockSig.toString('hex'),
-    fStake: this.fStake,
+    hashStateRoot: BufferUtil.reverse(this.hashStateRoot).toString('hex'),
+    hashUTXORoot: BufferUtil.reverse(this.hashUTXORoot).toString('hex'),
     prevOutStakeHash: BufferUtil.reverse(this.prevOutStakeHash).toString('hex'),
     prevOutStakeN: this.prevOutStakeN,
-    nStakeTime: this.nStakeTime,
-    hashStateRoot: BufferUtil.reverse(this.hashStateRoot).toString('hex'),
-    hashUTXORoot: BufferUtil.reverse(this.hashUTXORoot).toString('hex')
+    vchBlockSig: this.vchBlockSig.toString('hex')
+
   };
 };
 
@@ -9473,8 +9460,11 @@ function Transaction(serialized) {
   }
   this.inputs = [];
   this.outputs = [];
+  this.witnessStack = [];
   this._inputAmount = undefined;
   this._outputAmount = undefined;
+  this.dummy = undefined;
+  this.flags = undefined;
 
   if (serialized) {
     if (serialized instanceof Transaction) {
@@ -9561,7 +9551,7 @@ Object.defineProperty(Transaction.prototype, 'outputAmount', ioProperty);
  * @return {Buffer}
  */
 Transaction.prototype._getHash = function() {
-  return Hash.sha256sha256(this.toBuffer());
+  return Hash.sha256sha256(this.toHashBuffer());
 };
 
 /**
@@ -9713,17 +9703,71 @@ Transaction.prototype.toBuffer = function() {
   return this.toBufferWriter(writer).toBuffer();
 };
 
+Transaction.prototype.toHashBuffer = function() {
+  var writer = new BufferWriter();
+  return this.toHashBufferWriter(writer).toBuffer();
+};
+
 Transaction.prototype.toBufferWriter = function(writer) {
+
   writer.writeInt32LE(this.version);
+
+  if (this.dummy !== undefined) {
+      writer.writeUInt8(0);
+  }
+
+  if (this.flags !== undefined) {
+
+    if (this.flags) {
+        writer.writeUInt8(1);
+    } else {
+        writer.writeUInt8(0);
+    }
+
+  }
+
   writer.writeVarintNum(this.inputs.length);
   _.each(this.inputs, function(input) {
     input.toBufferWriter(writer);
   });
+
   writer.writeVarintNum(this.outputs.length);
   _.each(this.outputs, function(output) {
     output.toBufferWriter(writer);
   });
+
+  if (this.flags) {
+
+    writer.writeVarintNum(this.inputs.length);
+
+    for (var j = 0; j < this.inputs.length; j++) {
+        writer.writeVarintNum(this.witnessStack[j].length);
+        writer.write(this.witnessStack[j]);
+    }
+
+  }
+
   writer.writeUInt32LE(this.nLockTime);
+
+  return writer;
+};
+
+Transaction.prototype.toHashBufferWriter = function(writer) {
+
+  writer.writeInt32LE(this.version);
+
+  writer.writeVarintNum(this.inputs.length);
+  _.each(this.inputs, function(input) {
+    input.toBufferWriter(writer);
+  });
+
+  writer.writeVarintNum(this.outputs.length);
+  _.each(this.outputs, function(output) {
+    output.toBufferWriter(writer);
+  });
+
+  writer.writeUInt32LE(this.nLockTime);
+
   return writer;
 };
 
@@ -9734,19 +9778,44 @@ Transaction.prototype.fromBuffer = function(buffer) {
 
 Transaction.prototype.fromBufferReader = function(reader) {
   $.checkArgument(!reader.finished(), 'No transaction data received');
+
   var i, sizeTxIns, sizeTxOuts;
 
   this.version = reader.readInt32LE();
+
   sizeTxIns = reader.readVarintNum();
+
+  if (!sizeTxIns) {
+      this.dummy = sizeTxIns;
+      this.flags = reader.readUInt8();
+      sizeTxIns = reader.readVarintNum();
+  }
+
   for (i = 0; i < sizeTxIns; i++) {
     var input = Input.fromBufferReader(reader);
     this.inputs.push(input);
   }
+
   sizeTxOuts = reader.readVarintNum();
+
   for (i = 0; i < sizeTxOuts; i++) {
     this.outputs.push(Output.fromBufferReader(reader));
   }
+
+
+  if (this.flags) {
+
+      var witnessSize = reader.readVarintNum();
+
+      for (var j = 0; j < witnessSize; j++) {
+          var num = reader.readVarintNum();
+          this.witnessStack.push(reader.read(num));
+      }
+
+  }
+
   this.nLockTime = reader.readUInt32LE();
+
   return this;
 };
 
