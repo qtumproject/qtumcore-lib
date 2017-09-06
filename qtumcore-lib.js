@@ -55266,7 +55266,7 @@ module.exports={
   "license": "MIT"
 }
 
-},{}],"bitcore-lib":[function(require,module,exports){
+},{}],"qtumcore-lib":[function(require,module,exports){
 (function (global,Buffer){
 'use strict';
 
