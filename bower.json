@@ -2,11 +2,11 @@
   "name": "qtumcore-lib",
   "main": "./qtumcore-lib.min.js",
   "version": "0.0.1",
-  "homepage": "http://bitcore.io",
+  "homepage": "http://qtum.org",
   "authors": [
-    "BitPay, Inc."
+    "QTUM <foundation@qtum.org>"
   ],
-  "description": "A pure, powerful core for your bitcoin project.",
+  "description": "A pure, powerful core for your qtum project.",
   "moduleType": [
     "globals"
   ],

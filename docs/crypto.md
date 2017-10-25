@@ -1,4 +1,4 @@
-# Bitcoin Crypto
+# QTUM Crypto
 The cryptographic primitives (ECDSA and HMAC) implementations in this package have been reviewed by the BitPay engineering team. More audits and reviews are welcomed.
 
 ## Random

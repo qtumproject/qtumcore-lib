@@ -2,7 +2,7 @@
 
 ## Principles
 
-Bitcoin is a powerful new peer-to-peer platform for the next generation of financial technology. The decentralized nature of the Bitcoin network allows for highly resilient bitcoin infrastructure, and the developer community needs reliable, open-source tools to implement bitcoin apps and services. Bitcore provides a reliable API for JavaScript apps that need to interface with Bitcoin.
+QTUM is a powerful new peer-to-peer platform for the next generation of financial technology. The decentralized nature of the QTUM network allows for highly resilient QTUM infrastructure, and the developer community needs reliable, open-source tools to implement QTUM apps and services. Bitcore provides a reliable API for JavaScript apps that need to interface with QTUM.
 
 To get started, just `npm install bitcore` or `bower install bitcore`.
 
@@ -17,10 +17,10 @@ To get started, just `npm install bitcore` or `bower install bitcore`.
 
 ## Payment Handling
 * [Using Different Units](unit.md)
-* [Acknowledging and Requesting Payments: Bitcoin URIs](uri.md)
+* [Acknowledging and Requesting Payments: QTUM URIs](uri.md)
 * [The Transaction Class](transaction.md)
 
-## Bitcoin Internals
+## QTUM Internals
 * [Scripts](script.md)
 * [Block](block.md)
 
@@ -30,19 +30,6 @@ To get started, just `npm install bitcore` or `bower install bitcore`.
 
 ## Module Development
 * [Browser Builds](browser.md)
-
-## Modules
-
-Some functionality is implemented as a module that can be installed separately:
-
-* [Payment Protocol Support](https://github.com/bitpay/bitcore-payment-protocol)
-* [Peer to Peer Networking](https://github.com/bitpay/bitcore-p2p)
-* [Bitcoin Core JSON-RPC](https://github.com/bitpay/bitcoind-rpc)
-* [Payment Channels](https://github.com/bitpay/bitcore-channel)
-* [Mnemonics](https://github.com/bitpay/bitcore-mnemonic)
-* [Elliptical Curve Integrated Encryption Scheme](https://github.com/bitpay/bitcore-ecies)
-* [Blockchain Explorers](https://github.com/bitpay/bitcore-explorers)
-* [Signed Messages](https://github.com/bitpay/bitcore-message)
 
 # Examples 
 

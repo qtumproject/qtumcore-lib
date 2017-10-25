@@ -40,7 +40,7 @@ var transaction = new bitcore.Transaction()
   .sign(privateKey);
 ```
 
-## Sign a Bitcoin message
+## Sign a QTUM message
 ```javascript
 var Message = require('bitcore-message');
 
@@ -50,7 +50,7 @@ var message = new Message('This is an example of a signed message.');
 var signature = message.sign(privateKey);
 ```
 
-## Verify a Bitcoin message
+## Verify a QTUM message
 ```javascript
 var Message = require('bitcore-message');
 

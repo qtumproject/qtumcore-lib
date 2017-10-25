@@ -9,7 +9,7 @@ bitcore.versionGuard = function(version) {
     var message = 'More than one instance of qtumcore-lib found. ' +
       'Please make sure to require qtumcore-lib and check that submodules do' +
       ' not also include their own qtumcore-lib dependency.';
-    throw new Error(message);
+    console.log(message);
   }
 };
 bitcore.versionGuard(global._qtumcore);
