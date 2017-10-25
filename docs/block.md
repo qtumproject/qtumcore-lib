@@ -13,8 +13,6 @@ assert(block.header); // an instance of block header, more info below
 assert(block.transactions); // an array of transactions, more info below
 ```
 
-For detailed technical information about a block please visit [Blocks](https://en.bitcoin.it/wiki/Blocks#Block_structure) on the Bitcoin Wiki.
-
 ## Block Header
 Each instance of Block has a BlockHeader _(which can be instantiated separately)_. The header has validation methods, to verify that the block.
 
@@ -33,8 +31,6 @@ assert(block.header.time);
 assert(block.header.bits);
 assert(block.header.nonce);
 ```
-
-For more information about the specific properties of a block header please visit the [Block hashing algorithm](https://en.bitcoin.it/wiki/Block_hashing_algorithm) page on the Bitcoin Wiki.
 
 ## Transactions
 The set of transactions in a block is an array of instances of [Transaction](transaction.md) and can be explored by iterating on the block's `transactions` member.

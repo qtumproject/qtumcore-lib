@@ -6,21 +6,10 @@ To understand the need of using the `Unit` class when dealing with unit conversi
 ```
 > 81.99 * 100000 // wrong
 8198999.999999999
-> var bitcore = require('bitcore');
-> var Unit = bitcore.Unit;
+> var qtumcore = require('qtumcore');
+> var Unit = qtumcore.Unit;
 > Unit.fromMilis(81.99).toSatoshis() // correct
 8199000
-```
-
-## Supported units
-The supported units are BTC, mBTC, bits (micro BTCs, uBTC) and satoshis. The codes for each unit can be found as members of the Unit class.
-
-```javascript
-var btcCode = Unit.BTC;
-var mbtcCode = Unit.mBTC;
-var ubtcCode = Unit.uBTC;
-var bitsCode = Unit.bits;
-var satsCode = Unit.satoshis;
 ```
 
 ## Creating units

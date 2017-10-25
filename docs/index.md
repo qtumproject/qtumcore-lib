@@ -1,10 +1,6 @@
-# Bitcore v0.13
-
 ## Principles
 
-QTUM is a powerful new peer-to-peer platform for the next generation of financial technology. The decentralized nature of the QTUM network allows for highly resilient QTUM infrastructure, and the developer community needs reliable, open-source tools to implement QTUM apps and services. Bitcore provides a reliable API for JavaScript apps that need to interface with QTUM.
-
-To get started, just `npm install bitcore` or `bower install bitcore`.
+QTUM is a powerful new peer-to-peer platform for the next generation of financial technology. The decentralized nature of the QTUM network allows for highly resilient QTUM infrastructure, and the developer community needs reliable, open-source tools to implement QTUM apps and services. Qtumcore provides a reliable API for JavaScript apps that need to interface with QTUM.
 
 # Documentation Index
 
@@ -36,11 +32,11 @@ To get started, just `npm install bitcore` or `bower install bitcore`.
 ## Create and Save a Private Key
 
 ```javascript
-var privateKey = new bitcore.PrivateKey();
+var privateKey = new qtumcore.PrivateKey();
 
 var exported = privateKey.toWIF();
 // e.g. L3T1s1TYP9oyhHpXgkyLoJFGniEgkv2Jhi138d7R2yJ9F4QdDU2m
-var imported = bitcore.PrivateKey.fromWIF(exported);
+var imported = qtumcore.PrivateKey.fromWIF(exported);
 var hexa = privateKey.toString();
 // e.g. 'b9de6e778fe92aa7edb69395556f843f1dce0448350112e14906efc2a80fa61a'
 ```
@@ -55,7 +51,7 @@ var address = privateKey.toAddress();
 
 ```javascript
 // Build a 2-of-3 address from public keys
-var p2shAddress = new bitcore.Address([publicKey1, publicKey2, publicKey3], 2);
+var p2shAddress = new qtumcore.Address([publicKey1, publicKey2, publicKey3], 2);
 ```
 
 ## Request a Payment
@@ -65,7 +61,7 @@ var paymentInfo = {
   address: '1DNtTk4PUCGAdiNETAzQFWZiy2fCHtGnPx',
   amount: 120000 //satoshis
 };
-var uri = new bitcore.URI(paymentInfo).toString();
+var uri = new qtumcore.URI(paymentInfo).toString();
 ```
 
 ## Create a Transaction

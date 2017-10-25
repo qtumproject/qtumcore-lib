@@ -10,7 +10,7 @@ qtum:12A1MyfXbW6RhdRAZEqofac5jCQQjwEPBu?amount=1.2&message=Payment&label=Satoshi
 ```
 
 ## URI Validation
-The main use that we expect you'll have for the `URI` class in bitcore is validating and parsing qtum URIs. A `URI` instance exposes the address as a bitcore `Address` object and the amount in Satoshis, if present.
+The main use that we expect you'll have for the `URI` class in qtumcore is validating and parsing qtum URIs. A `URI` instance exposes the address as a qtumcore `Address` object and the amount in Satoshis, if present.
 
 The code for validating URIs looks like this:
 
@@ -23,8 +23,6 @@ console.log(uri.address.network, uri.amount); // 'livenet', 120000000
 
 ## URI Parameters
 All standard parameters can be found as members of the `URI` instance. However a QTUM URI may contain other non-standard parameters, all those can be found under the `extra` namespace.
-
-See [the official BIP21 spec](https://github.com/bitcoin/bips/blob/master/bip-0021.mediawiki) for more information.
 
 ## Create URI
 Another important use case for the `URI` class is creating a QTUM URI for sharing a payment request. That can be accomplished by using a dictionary to create an instance of URI.

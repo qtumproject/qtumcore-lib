@@ -1,5 +1,5 @@
 # Transaction
-Bitcore provides a very simple API for creating transactions. We expect this API to be accessible for developers without knowing the working internals of QTUM in deep detail. What follows is a small introduction to transactions with some basic knowledge required to use this API.
+Qtumcore provides a very simple API for creating transactions. We expect this API to be accessible for developers without knowing the working internals of QTUM in deep detail. What follows is a small introduction to transactions with some basic knowledge required to use this API.
 
 A Transaction contains a set of inputs and a set of outputs. Each input contains a reference to another transaction's output, and a signature that allows the value referenced in that output to be used in this transaction.
 
@@ -75,14 +75,13 @@ transaction.applySignature(receivedSig);
 ```
 
 ## Adding inputs
-Transaction inputs are instances of either [Input](https://github.com/bitpay/bitcore/tree/master/lib/transaction/input) or its subclasses. `Input` has some abstract methods, as there is no actual concept of a "signed input" in the QTUM scripting system (just valid signatures for <tt>OP_CHECKSIG</tt> and similar opcodes). They are stored in the `input` property of `Transaction` instances.
 
-Bitcore contains two implementations of `Input`, one for spending _Pay to Public Key Hash_ outputs (called `PublicKeyHashInput`) and another to spend _Pay to Script Hash_ outputs for which the redeem script is a Multisig script (called `MultisigScriptHashInput`).
+Qtumcore contains two implementations of `Input`, one for spending _Pay to Public Key Hash_ outputs (called `PublicKeyHashInput`) and another to spend _Pay to Script Hash_ outputs for which the redeem script is a Multisig script (called `MultisigScriptHashInput`).
 
 All inputs have the following five properties:
 - `prevTxId`: a `Buffer` with the id of the transaction with the output this input is spending
 - `outputIndex`: a `number` the index of the output in the previous transaction
-- `sequenceNumber`: a `number`, the sequence number, see [QTUM's developer guide on nLockTime and the sequence number](https://bitcoin.org/en/developer-guide#locktime-and-sequence-number).
+- `sequenceNumber`: a `number`, the sequence number
 - `script`: the `Script` instance for this input. Usually called `scriptSig` in the QTUM community.
 - `output`: if available, a `Output` instance of the output associated with this input.
 
@@ -90,7 +89,7 @@ Both `PublicKeyHashInput` and `MultisigScriptHashInput` cache the information ab
 
 Some methods related to adding inputs are:
 - `from`: A high level interface to add an input from a UTXO. It has a series of variants:
-  - `from(utxo)`: add an input from an [Unspent Transaction Output](http://bitcore.io/guide/unspentoutput.html). Currently, only P2PKH outputs are supported.
+  - `from(utxo)`: add an input from an
   - `from(utxos)`: same as above, but passing in an array of Unspent Outputs.
   - `from(utxo, publicKeys, threshold)`: add an input that spends a UTXO with a P2SH output for a Multisig script. The `publicKeys` argument is an array of public keys, and `threshold` is the number of required signatures in the Multisig script.
 
@@ -105,8 +104,8 @@ This input contains a set of signatures in a `signatures` property, and each tim
 
 ## Signing a Transaction
 The following methods are used to manage signatures for a transaction:
-- `getSignatures`: takes an array of `PrivateKey` or strings from which a `PrivateKey` can be instantiated; the transaction to be signed; the kind of [signature hash to use](https://bitcoin.org/en/developer-guide#signature-hash-types). Returns an array of objects with the following properties:
-  - `signature`: an instance of [Signature](https://github.com/bitpay/bitcore/blob/master/lib/crypto/signature.js)
+- `getSignatures`: takes an array of `PrivateKey` or strings from which a `PrivateKey` can be instantiated; the transaction to be signed; the kind of [signature hash to use](). Returns an array of objects with the following properties:
+  - `signature`: an instance of [Signature]()
   - `prevTxId`: this input's `prevTxId`,
   - `outputIndex`: this input's `outputIndex`,
   - `inputIndex`: this input's index in the transaction
@@ -129,21 +128,21 @@ To remove all outputs, you can use `clearOutputs()`, which preserves change outp
 There are a series of methods used for serialization:
 - `toObject`: Returns a plain JavaScript object with no methods and enough information to fully restore the state of this transaction. Using other serialization methods (except for `toJSON`) will cause a some information to be lost.
 - `toJSON`: Will be called when using `JSON.stringify` to return JSON-encoded string using the output from `toObject`.
-- `toString` or `uncheckedSerialize`: Returns an hexadecimal serialization of the transaction, in the [serialization format for QTUM](https://bitcoin.org/en/developer-reference#raw-transaction-format).
+- `toString` or `uncheckedSerialize`: Returns an hexadecimal serialization of the transaction
 - `serialize`: Does a series of checks before serializing the transaction
 - `inspect`: Returns a string with some information about the transaction (currently a string formatted as `<Transaction 000...000>`, that only shows the serialized value of the transaction.
 - `toBuffer`: Serializes the transaction for sending over the wire in the QTUM network
 - `toBufferWriter`: Uses an already existing BufferWriter to copy over the serialized transaction
 
 ## Serialization Checks
-When serializing, the bitcore library performs a series of checks. These can be disabled by providing an object to the `serialize` method with the checks that you'll like to skip.
+When serializing, the qtumcore library performs a series of checks. These can be disabled by providing an object to the `serialize` method with the checks that you'll like to skip.
 - `disableLargeFees` avoids checking that the fee is no more than `Transaction.FEE_PER_KB * Transaction.FEE_SECURITY_MARGIN * size_in_kb`.
 - `disableSmallFees` avoids checking that the fee is less than `Transaction.FEE_PER_KB * size_in_kb / Transaction.FEE_SECURITY_MARGIN`.
 - `disableIsFullySigned` does not check if all inputs are fully signed
 - `disableDustOutputs` does not check for dust outputs being generated
 - `disableMoreOutputThanInput` avoids checking that the sum of the output amounts is less than or equal to the sum of the amounts for the outputs being spent in the transaction
 
-These are the current default values in the bitcore library involved on these checks:
+These are the current default values in the qtumcore library involved on these checks:
 - `Transaction.FEE_PER_KB`: `10000` (satoshis per kilobyte)
 - `Transaction.FEE_SECURITY_MARGIN`: `15`
 - `Transaction.DUST_AMOUNT`: `546` (satoshis)
@@ -159,11 +158,8 @@ For this reason, some methods in the Transaction class are provided:
 Internally, a `_changeIndex` property stores the index of the change output (so it can get updated when a new input or output is added).
 
 ## Time-Locking transaction
-All QTUM transactions contain a locktime field. The locktime indicates the earliest time a transaction can be added to the blockchain. Locktime allows signers to create time-locked transactions which will only become valid in the future, giving the signers a chance to change their minds. Locktime can be set in the form of a QTUM block height (the transaction can only be included in a block with a higher height than specified) or a linux timestamp (transaction can only be confirmed after that time). For more information see [QTUM's development guide section on locktime](https://bitcoin.org/en/developer-guide#locktime-and-sequence-number).
+All QTUM transactions contain a locktime field. The locktime indicates the earliest time a transaction can be added to the blockchain. Locktime allows signers to create time-locked transactions which will only become valid in the future, giving the signers a chance to change their minds. Locktime can be set in the form of a QTUM block height (the transaction can only be included in a block with a higher height than specified) or a linux timestamp (transaction can only be confirmed after that time).
 
-In bitcore, you can set a `Transaction`'s locktime by using the methods `Transaction#lockUntilDate` and `Transaction#lockUntilBlockHeight`. You can also get a friendly version of the locktime field via `Transaction#getLockTime`;
-
-For example:
 
 ```javascript
 var future = new Date(2025,10,30); // Sun Nov 30 2025
@@ -172,6 +168,3 @@ var transaction = new Transaction()
 console.log(transaction.getLockTime());
 // output similar to: Sun Nov 30 2025 00:00:00 GMT-0300 (ART)
 ```
-
-## Upcoming changes
-We're debating an API for Merge Avoidance, CoinJoin, Smart contracts, CoinSwap, and Stealth Addresses. We're expecting to have all of them by some time in 2015. Payment channel creation is available in the [bitcore-channel](https://github.com/bitpay/bitcore-channel) module.

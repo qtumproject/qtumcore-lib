@@ -22,7 +22,7 @@ We're using qtumcore-lib in production, but please use common sense when doing a
 
 ## Contributing
 
-Please send pull requests for bug fixes, code optimization, and ideas for improvement. For more information on how to contribute, please refer to our [CONTRIBUTING](https://github.com/bitpay/bitcore-lib/blob/master/CONTRIBUTING.md) file.
+Please send pull requests for bug fixes, code optimization, and ideas for improvement. 
 
 ## Building the Browser Bundle
 
